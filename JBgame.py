@@ -3,6 +3,7 @@ import sys
 
 pygame.init()
 
+# Определяем размеры окна
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
 
@@ -12,6 +13,16 @@ font = pygame.font.Font(None, 48)
 
 # Загружаем изображение фона
 background_image = pygame.image.load('photos/menu.jpg')
+settings_background_image = pygame.image.load('photos/menu.jpg')
+
+# Загружаем и воспроизводим фоновую музыку
+pygame.mixer.music.load('music/test music.mp3')
+pygame.mixer.music.set_volume(0.5)  # Установка начальной громкости
+pygame.mixer.music.play(-1)  # Воспроизводим музыку в бесконечном цикле
+
+# Переменная для хранения громкости
+volume = 0.5  # Начальная громкость (от 0.0 до 1.0)
+
 
 # Функция для отрисовки кнопки
 def draw_button(text, x, y, width, height, color):
@@ -21,31 +32,79 @@ def draw_button(text, x, y, width, height, color):
     screen.blit(text_surface, text_rect)
 
 
-# Главный игровой цикл
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x, mouse_y = event.pos
-            # Проверка нажатия кнопки "Играть"
-            if 300 <= mouse_x <= 500 and 200 <= mouse_y <= 300:
-                pass
-            # Проверка нажатия кнопки "Настройки"
-            if 300 <= mouse_x <= 500 and 350 <= mouse_y <= 450:
-                pass
+# Функция для отображения текущей громкости
+def display_volume():
+    volume_text = f"Громкость: {int(volume * 100)}%"
+    text_surface = font.render(volume_text, True, (130, 115, 192))
+    screen.blit(text_surface, (width // 2 - text_surface.get_width() // 2, 100))
 
-    # Отображаем фон
-    screen.blit(background_image, (0, 0))
 
-    # Рисуем кнопки
-    draw_button("Играть", 300, 200, 200, 100, (8, 8, 17))
-    draw_button("Настройки", 300, 350, 200, 100, (8, 8, 17))
+# Основная функция
+def main_menu():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                # Проверка нажатия кнопки "Играть"
+                if 300 <= mouse_x <= 500 and 200 <= mouse_y <= 300:
+                    pass
+                # Проверка нажатия кнопки "Настройки"
+                if 300 <= mouse_x <= 500 and 350 <= mouse_y <= 450:
+                    settings_menu()
 
-    # Обновляем экран
-    pygame.display.flip()
+        # Отображаем фон главного меню
+        screen.blit(background_image, (0, 0))
 
-# Завершение работы Pygame
-pygame.quit()
-sys.exit()
+        # Рисуем кнопки
+        draw_button("Играть", 300, 200, 200, 100, (8, 8, 17))
+        draw_button("Настройки", 300, 350, 200, 100, (8, 8, 17))
+
+        # Обновляем экран
+        pygame.display.flip()
+
+
+def settings_menu():
+    global volume  # Используем глобальную переменную для громкости
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+
+                # Проверка нажатия кнопки "Назад"
+                if 300 <= mouse_x <= 500 and 450 <= mouse_y <= 550:
+                    return  # Возвращаемся в главное меню
+
+                # Проверка нажатия кнопки "Увеличить громкость"
+                if 300 <= mouse_x <= 500 and 200 <= mouse_y <= 300:
+                    if volume < 1.0:  # Проверяем, чтобы не превышать 1.0
+                        volume = min(round(volume + 0.1, 2), 1.0)  # Увеличиваем громкость
+                        pygame.mixer.music.set_volume(volume)
+                # Проверка нажатия кнопки "Уменьшить громкость"
+                if 300 <= mouse_x <= 500 and 350 <= mouse_y <= 450:
+                    if volume > 0.0:  # Проверяем, чтобы не опускаться ниже 0.0
+                        volume = max(round(volume - 0.1, 2), 0.0)  # Уменьшаем громкость
+                        pygame.mixer.music.set_volume(volume)
+
+        # Отображаем фон меню настроек
+        screen.blit(settings_background_image, (0, 0))
+
+        # Рисуем кнопку "Назад"
+        draw_button("Назад", 300, 450, 200, 100, (8, 8, 17))
+        # Рисуем кнопку "Увеличить громкость"
+        draw_button("Увеличить громкость", 200, 150, 400, 100, (8, 8, 17))
+        # Рисуем кнопку "Уменьшить громкость"
+        draw_button("Уменьшить громкость", 200, 300, 400, 100, (8, 8, 17))
+
+        # Отображаем текущую громкость
+        display_volume()
+
+        # Обновляем экран
+        pygame.display.flip()
+
+main_menu()
