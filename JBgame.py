@@ -10,6 +10,7 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('JBgame')
 
 font = pygame.font.Font(None, 48)
+lvls_font = pygame.font.Font(None, 100)
 
 # Загружаем изображение фона
 background_image = pygame.image.load('photos/menu.jpg')
@@ -25,7 +26,7 @@ volume = 0.5  # Начальная громкость (от 0.0 до 1.0)
 
 
 # Функция для отрисовки кнопки
-def draw_button(text, x, y, width, height, color):
+def draw_button(text, x, y, width, height, color, font=font):
     pygame.draw.rect(screen, color, (x, y, width, height))
     text_surface = font.render(text, True, (130, 115, 192))
     text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2))
@@ -50,7 +51,7 @@ def main_menu():
                 mouse_x, mouse_y = event.pos
                 # Проверка нажатия кнопки "Играть"
                 if 300 <= mouse_x <= 500 and 200 <= mouse_y <= 300:
-                    pass
+                    lvls()
                 # Проверка нажатия кнопки "Настройки"
                 if 300 <= mouse_x <= 500 and 350 <= mouse_y <= 450:
                     settings_menu()
@@ -85,6 +86,7 @@ def settings_menu():
                     if volume < 1.0:  # Проверяем, чтобы не превышать 1.0
                         volume = min(round(volume + 0.1, 2), 1.0)  # Увеличиваем громкость
                         pygame.mixer.music.set_volume(volume)
+
                 # Проверка нажатия кнопки "Уменьшить громкость"
                 if 300 <= mouse_x <= 500 and 350 <= mouse_y <= 450:
                     if volume > 0.0:  # Проверяем, чтобы не опускаться ниже 0.0
@@ -103,6 +105,34 @@ def settings_menu():
 
         # Отображаем текущую громкость
         display_volume()
+
+        # Обновляем экран
+        pygame.display.flip()
+
+
+# Уровни
+def lvls():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+
+                # Проверка нажатия кнопки "Назад"
+                if 10 <= mouse_x <= 160 and 10 <= mouse_y <= 160:
+                    return  # Возвращаемся в главное меню
+
+                # Проверка нажатия на первый уровень
+                if 10 <= mouse_x <= 160 and 225 <= mouse_y <= 375:
+                    pass
+
+        # Отображаем фон меню уровней
+        screen.blit(background_image, (0, 0))
+
+        draw_button('1', 10, 225, 150, 150, (8, 8, 17), lvls_font)
+        draw_button('Назад', 10, 10, 150, 150, (8, 8, 17))
 
         # Обновляем экран
         pygame.display.flip()
