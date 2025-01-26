@@ -187,6 +187,9 @@ def first_lvl():
 
         if y_ball + 80  > height:
             v = -v
+            # Запуск звука удара
+            pygame.mixer.Sound("music/ball punch.mp3").play()
+
 
     pygame.quit()
 
