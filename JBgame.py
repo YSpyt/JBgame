@@ -192,6 +192,6 @@ def first_lvl():
 
 
     pygame.quit()
-
+111
 
 main_menu()
