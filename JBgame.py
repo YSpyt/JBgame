@@ -126,7 +126,7 @@ def lvls():
 
                 # Проверка нажатия на первый уровень
                 if 10 <= mouse_x <= 160 and 225 <= mouse_y <= 375:
-                    pass
+                    level_one()  # Переход к первому уровню
 
         # Отображаем фон меню уровней
         screen.blit(background_image, (0, 0))
@@ -136,5 +136,65 @@ def lvls():
 
         # Обновляем экран
         pygame.display.flip()
+
+
+# Функция для первого уровня
+def level_one():
+    pygame.init()
+    pygame.display.set_caption('Jump Ball')
+    size = width, height = 800, 600
+    screen = pygame.display.set_mode(size)
+
+    background = pygame.image.load('photos/phon.png')
+    background = pygame.transform.scale(background, (width, height))
+
+    running = True
+    y_ball = 200
+    v0 = 0
+    v = v0
+    g = 10 * 10
+    clock = pygame.time.Clock()
+
+    # Позиция фона
+    background_x = 0
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        # Обработка нажатий клавиш
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            background_x += 1  # Двигаем фон влево
+        if keys[pygame.K_RIGHT]:
+            background_x -= 1  # Двигаем фон вправо
+
+        # Отрисовка фона
+        screen.blit(background, (background_x, 0))
+
+        ball_size = 40, 40
+        ball_a_size = 30, 50
+        ball_d_size = 50, 30
+        ball_x = 180 + int((ball_size[0] - ball_a_size[0]) / 2 * abs(v) / 296)
+        ball_y = int(y_ball) + int((ball_size[1] - ball_a_size[1]) / 2 * abs(v) / 148)
+        ball_x_size = int(ball_size[0] - 10 * abs(v) / 296)
+        ball_y_size = int(ball_size[1] + 10 * abs(v) / 148)
+
+        # Отрисовка шарика
+        pygame.draw.ellipse(screen, (0, 255, 0), (ball_x, ball_y, ball_x_size, ball_y_size), 0)
+
+        t = clock.tick() / 1000
+        t = min(t, 0.05)
+        v += g * t
+        y_ball += v * t
+
+        pygame.display.flip()
+
+        if y_ball > height - ball_y_size - 0.01 * int(v):
+            v = -v
+
+    pygame.quit()
+
 
 main_menu()
