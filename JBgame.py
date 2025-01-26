@@ -165,7 +165,7 @@ def first_lvl():
         if keys[pygame.K_LEFT] and background_x < 0:
             background_x += 1  # Двигаем фон влево
             print(background_x)
-        if keys[pygame.K_RIGHT] and background_x > width-8015:
+        if keys[pygame.K_RIGHT] and background_x > width - 8015:
             background_x -= 1  # Двигаем фон вправо
             print(background_x)
         # Отрисовка фона
@@ -185,13 +185,12 @@ def first_lvl():
 
         pygame.display.flip()
 
-        if y_ball + 80  > height:
+        if y_ball + 80 > height:
             v = -v
             # Запуск звука удара
             pygame.mixer.Sound("music/ball punch.mp3").play()
 
-
     pygame.quit()
-111
+
 
 main_menu()
