@@ -144,10 +144,10 @@ def first_lvl():
     pygame.init()
     pygame.display.set_caption('Jump Ball')
 
-    background = pygame.image.load('photos/phon.png')
+    background = pygame.image.load('photos/menu.jpg')
 
     running = True
-    y_ball = 350
+    y_ball = 300
     v0 = 0
     v = v0
     g = 10 * 10
@@ -174,7 +174,7 @@ def first_lvl():
         ball_y = int(y_ball)
 
         # Отрисовка шарика
-        pygame.draw.ellipse(screen, (0, 255, 0), (ball_x, ball_y, 40, 40), 0)
+        pygame.draw.ellipse(screen, (0, 0, 0), (ball_x, ball_y, 40, 40), 0)
 
         t = clock.tick() / 1000
         t = min(t, 0.05)
@@ -183,10 +183,11 @@ def first_lvl():
 
         pygame.display.flip()
 
-        if y_ball + 80 > height:
-            v = -v
+        if y_ball + 40 > height - 120:
+            v = -167
             # Запуск звука удара
             pygame.mixer.Sound("music/ball punch.mp3").play()
+
 
     pygame.quit()
 
