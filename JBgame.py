@@ -164,10 +164,8 @@ def first_lvl():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and background_x < 0:
             background_x += 1  # Двигаем фон влево
-            print(background_x)
         if keys[pygame.K_RIGHT] and background_x > width - 8015:
             background_x -= 1  # Двигаем фон вправо
-            print(background_x)
         # Отрисовка фона
         screen.blit(sky, (0, 0))
         screen.blit(background, (background_x, 450))
