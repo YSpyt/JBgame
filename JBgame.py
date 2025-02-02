@@ -178,7 +178,7 @@ def first_lvl():
 
         # Отрисовка фона
         screen.blit(sky, (0, 0))
-        screen.blit(background, (background_x, 450))
+        screen.blit(background, (background_x, 0))
 
         # Обновляем физику мяча
         t = clock.tick() / 1000
