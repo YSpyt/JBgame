@@ -158,7 +158,7 @@ def first_lvl():
 
     ball_sprite = load_image("ball_anim.png")
     all_sprites = pygame.sprite.Group()
-    ball = AnimatedSprite(ball_sprite, 22, 1, ball_x, ball_y, frame_delay=45, scale_factor=1)
+    ball = AnimatedSprite(ball_sprite, 22, 1, ball_x, ball_y, frame_delay=15, scale_factor=1)
     all_sprites.add(ball)
 
     # Позиция фона
