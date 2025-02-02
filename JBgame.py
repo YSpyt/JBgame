@@ -158,7 +158,7 @@ def first_lvl():
 
     ball_sprite = load_image("ball_anim.png")
     all_sprites = pygame.sprite.Group()
-    ball = AnimatedSprite(ball_sprite, 22, 1, ball_x, ball_y, frame_delay=15, scale_factor=1)
+    ball = AnimatedSprite(ball_sprite, 22, 1, ball_x, ball_y, frame_delay=20, scale_factor=1)
     all_sprites.add(ball)
 
     # Позиция фона
@@ -187,13 +187,13 @@ def first_lvl():
         y_ball += v * t
 
         # Проверка на столкновение с полом
-        if y_ball + 40 > height - 120:
+        if y_ball + 53 > height - 120:
             v = -167
             # Запуск звука удара
             pygame.mixer.Sound("music/ball punch.mp3").play()
             # Начало анимации
             ball.animation_complete = False  # Сброс флага завершения анимации
-            y_ball = height - 160  # Установка мяч на пол
+            y_ball = height - 173  # Установка мяч на пол
 
             # Сброс анимации к первому кадру
             ball.reset_animation()
