@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 
 pygame.init()
 
@@ -144,14 +145,21 @@ def first_lvl():
     pygame.init()
     pygame.display.set_caption('Jump Ball')
 
-    background = pygame.image.load('photos/menu.jpg')
+    background = pygame.image.load('photos/phon.png')
 
     running = True
-    y_ball = 300
+    y_ball = 480
     v0 = 0
     v = v0
     g = 10 * 10
     clock = pygame.time.Clock()
+    ball_x = 180
+    ball_y = int(y_ball)
+
+    ball_sprite = load_image("ball_anim.png")
+    all_sprites = pygame.sprite.Group()
+    ball = AnimatedSprite(ball_sprite, 22, 1, ball_x, ball_y, frame_delay=45, scale_factor=1)
+    all_sprites.add(ball)
 
     # Позиция фона
     background_x = 0
@@ -160,36 +168,102 @@ def first_lvl():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
         # Обработка нажатий клавиш
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and background_x < 0:
             background_x += 1  # Двигаем фон влево
         if keys[pygame.K_RIGHT] and background_x > width - 8015:
             background_x -= 1  # Двигаем фон вправо
+
         # Отрисовка фона
         screen.blit(sky, (0, 0))
         screen.blit(background, (background_x, 450))
 
-        ball_x = 180
-        ball_y = int(y_ball)
-
-        # Отрисовка шарика
-        pygame.draw.ellipse(screen, (0, 0, 0), (ball_x, ball_y, 40, 40), 0)
-
+        # Обновляем физику мяча
         t = clock.tick() / 1000
         t = min(t, 0.05)
         v += g * t
         y_ball += v * t
 
-        pygame.display.flip()
-
+        # Проверка на столкновение с полом
         if y_ball + 40 > height - 120:
             v = -167
             # Запуск звука удара
             pygame.mixer.Sound("music/ball punch.mp3").play()
+            # Начало анимации
+            ball.animation_complete = False  # Сброс флага завершения анимации
+            y_ball = height - 160  # Установка мяч на пол
 
+            # Сброс анимации к первому кадру
+            ball.reset_animation()
+
+        # Обновляем координаты мяча
+        ball.rect.topleft = (ball_x, y_ball)
+
+        # Обновляем и отрисовываем спрайты
+        all_sprites.update()
+        all_sprites.draw(screen)
+
+        pygame.display.flip()
 
     pygame.quit()
+
+
+# Загрузка изображения
+def load_image(name, colorkey=None):
+    fullname = os.path.join('photos', name)
+    image = pygame.image.load(fullname)
+    if colorkey is not None:
+        image = image.convert()
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    else:
+        image = image.convert_alpha()
+    return image
+
+
+# Класс анимированного спрайта
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, x, y, frame_delay=5, scale_factor=1):
+        super().__init__()
+        self.frames = []
+        self.scale_factor = scale_factor
+        self.cut_sheet(sheet, columns, rows)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.counter = 0
+        self.frame_delay = frame_delay
+        self.animation_complete = False
+
+    def cut_sheet(self, sheet, columns, rows):
+        frame_width = sheet.get_width() // columns
+        frame_height = sheet.get_height() // rows
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (frame_width * i, frame_height * j)
+                frame = sheet.subsurface(pygame.Rect(frame_location, (frame_width, frame_height)))
+
+                if self.scale_factor != 1:
+                    frame = pygame.transform.scale(frame, (int(frame_width * self.scale_factor), int(frame_height * self.scale_factor)))
+
+                self.frames.append(frame)
+
+    def reset_animation(self):
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+
+    def update(self):
+        if not self.animation_complete:
+            self.counter += 1
+            if self.counter >= self.frame_delay:
+                self.counter = 0
+                self.cur_frame += 1
+                if self.cur_frame >= len(self.frames):
+                    self.cur_frame = 0
+                self.image = self.frames[self.cur_frame]
 
 
 main_menu()
