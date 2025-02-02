@@ -19,7 +19,7 @@ background_image = pygame.image.load('photos/menu.jpg')
 settings_background_image = pygame.image.load('photos/menu.jpg')
 
 # Загружаем и воспроизводим фоновую музыку
-pygame.mixer.music.load('music/test music.mp3')
+pygame.mixer.music.load('music/JBgame soundtrack(by Famour).mp3')
 pygame.mixer.music.set_volume(0.5)  # Установка начальной громкости
 pygame.mixer.music.play(-1)  # Воспроизводим музыку в бесконечном цикле
 
