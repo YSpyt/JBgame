@@ -143,16 +143,16 @@ def lvls():
 
 
 # Функция для расчета столкновения с препятствием
-def check_collision(center_x, center_y, x0, y0, x1, y1=480): # y1 по умолчанию пол
+def check_collision(center_x, center_y, i): # i = (x0, y0, x1, y1)
     # Для удобства создаем переменную радиуса
     R = 26.5
     # Проверяем углы препятствия, используя теорему Пифагора
-    if min(abs(center_x - x0), abs(center_x - x1))**2 + min(abs(center_y - y0), abs(center_y - y1))**2 <= R**2:
+    if min(abs(center_x - i[0]), abs(center_x - i[2]))**2 + min(abs(center_y - i[1]), abs(center_y - i[3]))**2 <= R**2:
         return True
 
-    # В случае если мячик не касается края, то проверяем находится ли он между двумя краями препятствия
+    # В случае, если мячик не касается края, то проверяем находится ли он между двумя краями препятствия
     # и касается ли его по высоте
-    if x0 <= center_x <= x1 and y0 <= center_y + 69 <= y1:
+    if i[0] <= center_x <= i[2] and i[1] <= center_y + 69 <= i[3]:
         return True
     return False
 
@@ -173,10 +173,10 @@ def first_lvl():
     ball_x = 180
     ball_y = int(y_ball)
     x = ball_x
+    s = [] # Создаем список координат препятствий
 
     # Координаты препятствия 1
-    x0_1, y0_1 = 116, 495
-    x1_1, y1_1 = 141, 580
+    s.append((116, 495, 141, 580)) # x0, y0, x1, y1
 
     # Создаем анимированный спрайт мячика
     ball_sprite = load_image("ball_anim.png")
@@ -227,16 +227,18 @@ def first_lvl():
             # Сброс анимации к первому кадру
             ball.reset_animation()
 
-        if check_collision(x+29.5, y_ball+42.5, x0_1, y0_1, x1_1, y1_1):
-            v = -167
-            # Запуск звука удара
-            pygame.mixer.Sound("music/ball punch.mp3").play()
-            # Начало анимации
-            ball.animation_complete = False  # Сброс флага завершения анимации
-            y_ball = y0_1 - 69  # Установка мяча на верх препятсвия
+        # Проверка касания препятствия
+        for i in s:
+            if check_collision(x+29.5, y_ball+42.5, i):
+                v = -167
+                # Запуск звука удара
+                pygame.mixer.Sound("music/ball punch.mp3").play()
+                # Начало анимации
+                ball.animation_complete = False  # Сброс флага завершения анимации
+                y_ball = i[1] - 69  # Установка мяча на верх препятствия
 
-            # Сброс анимации к первому кадру
-            ball.reset_animation()
+                # Сброс анимации к первому кадру
+                ball.reset_animation()
 
         # Обновляем координаты мяча
         ball.rect.topleft = (ball_x, y_ball)
