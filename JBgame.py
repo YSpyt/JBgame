@@ -14,7 +14,6 @@ font = pygame.font.Font(None, 48)
 lvls_font = pygame.font.Font(None, 100)
 sky = pygame.image.load('photos/sky.png')
 
-
 # Загружаем изображение фона
 background_image = pygame.image.load('photos/menu.jpg')
 settings_background_image = pygame.image.load('photos/menu.jpg')
@@ -143,16 +142,17 @@ def lvls():
 
 
 # Функция для расчета столкновения с препятствием
-def check_collision(center_x, center_y, i): # i = (x0, y0, x1, y1)
+def check_collision(center_x, center_y, i):  # i = (x0, y0, x1, y1)
     # Для удобства создаем переменную радиуса
     R = 26.5
     # Проверяем углы препятствия, используя теорему Пифагора
-    if min(abs(center_x - i[0]), abs(center_x - i[2]))**2 + min(abs(center_y - i[1]), abs(center_y - i[3]))**2 <= R**2:
+    if min(abs(center_x - i[0]), abs(center_x - i[2])) ** 2 + min(abs(center_y - i[1]),
+                                                                  abs(center_y - i[3])) ** 2 <= R ** 2:
         return True
 
-    # В случае, если мячик не касается края, то проверяем находится ли он между двумя краями препятствия
+    # В случае, если мячик не касается края, то проверяем находится ли его нижняя часть между двумя краями препятствия
     # и касается ли его по высоте
-    if i[0] <= center_x <= i[2] and i[1] <= center_y + 69 <= i[3]:
+    if i[0] <= center_x <= i[2] and i[1] <= center_y + R and i[3] >= center_y + R:
         return True
     return False
 
@@ -173,10 +173,10 @@ def first_lvl():
     ball_x = 180
     ball_y = int(y_ball)
     x = ball_x
-    s = [] # Создаем список координат препятствий
+    s = []  # Создаем список координат препятствий
 
-    # Координаты препятствия 1
-    s.append((116, 495, 141, 580)) # x0, y0, x1, y1
+    # Координаты препятствий
+    s.append((116, 495, 141, 580))  # x0, y0, x1, y1
 
     # Создаем анимированный спрайт мячика
     ball_sprite = load_image("ball_anim.png")
@@ -196,14 +196,14 @@ def first_lvl():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and background_x < 0:
             # Двигаем фон влево
-            background_x += 0.1
+            background_x += 0.75
             # Записываем изменение координат шарика
-            x -= 0.1
+            x -= 0.75
         if keys[pygame.K_RIGHT] and background_x > width - 8015:
             # Двигаем фон вправо
-            background_x -= 0.1
+            background_x -= 0.75
             # Записываем изменение координат шарика
-            x += 0.1
+            x += 0.75
 
         # Отрисовка фона
         screen.blit(sky, (0, 0))
@@ -229,7 +229,7 @@ def first_lvl():
 
         # Проверка касания препятствия
         for i in s:
-            if check_collision(x+29.5, y_ball+42.5, i):
+            if check_collision(x + 36, y_ball + 42.5, i):
                 v = -167
                 # Запуск звука удара
                 pygame.mixer.Sound("music/ball punch.mp3").play()
@@ -252,9 +252,7 @@ def first_lvl():
     pygame.quit()
 
 
-
-
-# Загрузка изображения
+# Функция для загрузки изображения
 def load_image(name, colorkey=None):
     fullname = os.path.join('photos', name)
     image = pygame.image.load(fullname)
@@ -282,7 +280,7 @@ class AnimatedSprite(pygame.sprite.Sprite):
         self.frame_delay = frame_delay
         self.animation_complete = False
 
-    # Режем анимацию на ряды
+    # Функция для нарезания анимации на кадры
     def cut_sheet(self, sheet, columns, rows):
         frame_width = sheet.get_width() // columns
         frame_height = sheet.get_height() // rows
@@ -292,16 +290,17 @@ class AnimatedSprite(pygame.sprite.Sprite):
                 frame = sheet.subsurface(pygame.Rect(frame_location, (frame_width, frame_height)))
 
                 if self.scale_factor != 1:
-                    frame = pygame.transform.scale(frame, (int(frame_width * self.scale_factor), int(frame_height * self.scale_factor)))
+                    frame = pygame.transform.scale(frame, (
+                    int(frame_width * self.scale_factor), int(frame_height * self.scale_factor)))
 
                 self.frames.append(frame)
 
-    # Сброс анимации
+    # Функция для сброса анимации
     def reset_animation(self):
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
 
-    # Обновляем
+    # Функция для обновления кадра анимации
     def update(self):
         # Проверяем, завершена ли анимация
         if not self.animation_complete:
