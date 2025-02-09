@@ -167,6 +167,8 @@ def first_lvl():
 
     back_to_lvls = pygame.image.load('photos/back_to_lvls.png')
 
+    win_window = pygame.image.load('photos/win_window.png')
+
     running = True
     y_ball = height - 189
     v0 = 0
@@ -186,6 +188,8 @@ def first_lvl():
     all_sprites = pygame.sprite.Group()
     ball = AnimatedSprite(ball_sprite, 22, 1, ball_x, ball_y, frame_delay=20, scale_factor=1)
     all_sprites.add(ball)
+    flag = True
+    print(flag)
 
     # Позиция фона
     background_x = 0
@@ -199,66 +203,92 @@ def first_lvl():
                 mouse_x, mouse_y = event.pos
 
                 # Проверка нажатия кнопки назад к уровням
-                if 10 <= mouse_x <= 46 and 10 <= mouse_y <= 54:
-                    return  # Возвращаемся в главное меню
+                if 10 <= mouse_x <= 46 and 10 <= mouse_y <= 54 and flag:
+                    lvls()  # Возвращаемся в меню уровней
+                    continue
 
-        # Обработка нажатий клавиш
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and background_x < 0:
-            # Двигаем фон влево
-            background_x += 0.75
-            # Записываем изменение координат шарика
-            x -= 0.75
-        if keys[pygame.K_RIGHT] and background_x > width - 8015:
-            # Двигаем фон вправо
-            background_x -= 0.75
-            # Записываем изменение координат шарика
-            x += 0.75
+                # Проверка нажатия кнопки к уровням
+                if 192 <= mouse_x <= 294 and 281 <= mouse_y <= 383:
+                    lvls()  # Возвращаемся в меню уровней
+                    continue
 
-        # Отрисовка фона
-        screen.blit(sky, (0, 0))
-        screen.blit(background, (background_x, 0))
+                # Проверка нажатия кнопки пройти заново
+                if 349 <= mouse_x <= 449 and 281 <= mouse_y <= 383:
+                    first_lvl()  # Запускаем уровень заново
+                    continue
 
-        # Отрисовка кнопки возврата к уровням
-        screen.blit(back_to_lvls, (10, 10))
+                # Проверка нажатия кнопки перейти к следующему уровнью
+                if 349 <= mouse_x <= 449 and 281 <= mouse_y <= 383:
+                    pass
+                    # second_lvl()  # Запускаем второй уровень
 
-        # Обновляем физику мяча
-        t = clock.tick() / 1000
-        t = min(t, 0.05)
-        v += g * t
-        y_ball += v * t
+        if flag:
+            # Обработка нажатий клавиш
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT] and background_x < 0:
+                # Двигаем фон влево
+                background_x += 0.75
+                # Записываем изменение координат шарика
+                x -= 0.75
+            if keys[pygame.K_RIGHT] and background_x > width - 8015:
+                # Двигаем фон вправо
+                background_x -= 0.75
+                # Записываем изменение координат шарика
+                x += 0.75
 
-        # Проверка на столкновение с полом
-        if y_ball + 69 > height - 120:
-            v = -167
-            # Запуск звука удара
-            pygame.mixer.Sound("music/ball punch.mp3").play()
-            # Начало анимации
-            ball.animation_complete = False  # Сброс флага завершения анимации
-            y_ball = height - 189  # Установка мяча на пол
+            # Отрисовка фона
+            screen.blit(sky, (0, 0))
+            screen.blit(background, (background_x, 0))
 
-            # Сброс анимации к первому кадру
-            ball.reset_animation()
+            # Отрисовка кнопки возврата к уровням
+            screen.blit(back_to_lvls, (10, 10))
 
-        # Проверка касания препятствия
-        for i in s:
-            if check_collision(x + 31, y_ball + 34.5, i):
+            # Обновляем физику мяча
+            t = clock.tick() / 1000
+            t = min(t, 0.05)
+            v += g * t
+            y_ball += v * t
+
+            # Победа после пересечения определенной границы по x
+            if x >= 7000:
+                flag = False
+                # отрисовываем всё как было и рисуем окно победы
+                screen.blit(sky, (0, 0))
+                screen.blit(background, (background_x, 0))
+                screen.blit(win_window, (0, 0))
+                continue
+
+            # Проверка на столкновение с полом
+            if y_ball + 69 > height - 120:
                 v = -167
                 # Запуск звука удара
                 pygame.mixer.Sound("music/ball punch.mp3").play()
                 # Начало анимации
                 ball.animation_complete = False  # Сброс флага завершения анимации
-                y_ball = i[1] - 69  # Установка мяча на верх препятствия
+                y_ball = height - 189  # Установка мяча на пол
 
                 # Сброс анимации к первому кадру
                 ball.reset_animation()
 
-        # Обновляем координаты мяча
-        ball.rect.topleft = (ball_x, y_ball)
+            # Проверка касания препятствия
+            for i in s:
+                if check_collision(x + 31, y_ball + 34.5, i):
+                    v = -167
+                    # Запуск звука удара
+                    pygame.mixer.Sound("music/ball punch.mp3").play()
+                    # Начало анимации
+                    ball.animation_complete = False  # Сброс флага завершения анимации
+                    y_ball = i[1] - 69  # Установка мяча на верх препятствия
 
-        # Обновляем и отрисовываем спрайты
-        all_sprites.update()
-        all_sprites.draw(screen)
+                    # Сброс анимации к первому кадру
+                    ball.reset_animation()
+
+            # Обновляем координаты мяча
+            ball.rect.topleft = (ball_x, y_ball)
+
+            # Обновляем и отрисовываем спрайты
+            all_sprites.update()
+            all_sprites.draw(screen)
 
         pygame.display.flip()
 
