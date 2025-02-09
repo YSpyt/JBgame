@@ -151,7 +151,8 @@ def check_collision(center_x, center_y, i):  # i = (x0, y0, x1, y1)
         return True
 
     # В случае, если мячик не касается края, то проверяем находится ли его нижняя часть между двумя краями препятствия
-    # и касается ли его по высоте
+    # и касается ли она его по высоте
+
     if i[0] <= center_x <= i[2] and i[1] <= center_y + R and i[3] >= center_y + R:
         return True
     return False
@@ -163,6 +164,8 @@ def first_lvl():
     pygame.display.set_caption('Jump Ball')
 
     background = pygame.image.load('photos/phon.png')
+
+    back_to_lvls = pygame.image.load('photos/back_to_lvls.png')
 
     running = True
     y_ball = height - 189
@@ -192,6 +195,13 @@ def first_lvl():
             if event.type == pygame.QUIT:
                 running = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+
+                # Проверка нажатия кнопки назад к уровням
+                if 10 <= mouse_x <= 46 and 10 <= mouse_y <= 54:
+                    return  # Возвращаемся в главное меню
+
         # Обработка нажатий клавиш
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and background_x < 0:
@@ -208,6 +218,9 @@ def first_lvl():
         # Отрисовка фона
         screen.blit(sky, (0, 0))
         screen.blit(background, (background_x, 0))
+
+        # Отрисовка кнопки возврата к уровням
+        screen.blit(back_to_lvls, (10, 10))
 
         # Обновляем физику мяча
         t = clock.tick() / 1000
@@ -229,7 +242,7 @@ def first_lvl():
 
         # Проверка касания препятствия
         for i in s:
-            if check_collision(x + 36, y_ball + 42.5, i):
+            if check_collision(x + 31, y_ball + 34.5, i):
                 v = -167
                 # Запуск звука удара
                 pygame.mixer.Sound("music/ball punch.mp3").play()
