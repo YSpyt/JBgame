@@ -165,7 +165,7 @@ def first_lvl():
     pygame.init()
     pygame.display.set_caption('Jump Ball')
 
-    background = pygame.image.load('photos/level_one.png')
+    background = pygame.image.load('photos/phon.png')
 
     back_to_lvls = pygame.image.load('photos/back_to_lvls.png')
 
