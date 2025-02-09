@@ -189,7 +189,6 @@ def first_lvl():
     ball = AnimatedSprite(ball_sprite, 22, 1, ball_x, ball_y, frame_delay=20, scale_factor=1)
     all_sprites.add(ball)
     flag = True
-    print(flag)
 
     # Позиция фона
     background_x = 0
