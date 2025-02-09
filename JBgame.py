@@ -54,9 +54,11 @@ def main_menu():
                 # Проверка нажатия кнопки "Играть"
                 if 300 <= mouse_x <= 500 and 200 <= mouse_y <= 300:
                     lvls()
+                    continue
                 # Проверка нажатия кнопки "Настройки"
                 if 300 <= mouse_x <= 500 and 350 <= mouse_y <= 450:
                     settings_menu()
+                    continue
 
         # Отображаем фон главного меню
         screen.blit(background_image, (0, 0))
@@ -125,7 +127,7 @@ def lvls():
 
                 # Проверка нажатия кнопки "Назад"
                 if 10 <= mouse_x <= 160 and 10 <= mouse_y <= 160:
-                    return  # Возвращаемся в главное меню
+                    main_menu()  # Возвращаемся в главное меню
 
                 # Проверка нажатия на первый уровень
                 if 10 <= mouse_x <= 160 and 225 <= mouse_y <= 375:
@@ -163,7 +165,7 @@ def first_lvl():
     pygame.init()
     pygame.display.set_caption('Jump Ball')
 
-    background = pygame.image.load('photos/phon.png')
+    background = pygame.image.load('photos/level_one.png')
 
     back_to_lvls = pygame.image.load('photos/back_to_lvls.png')
 
