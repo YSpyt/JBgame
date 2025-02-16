@@ -181,6 +181,7 @@ def first_lvl():
     ball_y = int(y_ball)
     x = ball_x
     s = []  # Создаем список координат препятствий
+    s1 = [] # Создаем список координат шипов
 
     # Координаты препятствий
     s.append((379, 359, 414, 480))  # x0, y0, x1, y1
@@ -190,6 +191,9 @@ def first_lvl():
     s.append((1763, 344, 2038, 480))
     s.append((2179, 344, 2454, 480))
     s.append((2631, 345, 2906, 481))
+
+    # Координаты шипов
+
 
     # Создаем анимированный спрайт мячика
     ball_sprite = load_image("ball_anim.png")
@@ -237,7 +241,7 @@ def first_lvl():
                 background_x += 0.75
                 # Записываем изменение координат шарика
                 x -= 0.75
-            if keys[pygame.K_RIGHT] and background_x > width - 8015:
+            if keys[pygame.K_RIGHT] and background_x > width - 3500:
                 # Двигаем фон вправо
                 background_x -= 0.75
                 # Записываем изменение координат шарика
@@ -257,7 +261,7 @@ def first_lvl():
             y_ball += v * t
 
             # Победа после пересечения определенной границы по x
-            if x >= 7000:
+            if x >= 2880:
                 flag = False
                 # отрисовываем всё как было и рисуем окно победы
                 screen.blit(sky, (0, 0))
@@ -276,6 +280,12 @@ def first_lvl():
 
                 # Сброс анимации к первому кадру
                 ball.reset_animation()
+
+            # Проверка касания шипа
+            for i in s1:
+                if check_collision(x + 31, y_ball + 34.5, i):
+                    first_lvl()
+                    continue
 
             # Проверка касания препятствия
             for i in s:
