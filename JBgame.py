@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import time
 
 pygame.init()
 
@@ -214,6 +215,8 @@ def first_lvl():
     # Позиция фона
     background_x = 0
 
+    start_time = time.time()
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -276,6 +279,17 @@ def first_lvl():
                 screen.blit(sky, (0, 0))
                 screen.blit(background, (background_x, 0))
                 screen.blit(win_window, (0, 0))
+                elapsed_time = time.time() - start_time
+                with open("best_time.txt.txt") as f:
+                    lines = f.readlines()
+                if lines[0] == '\n':
+                    lines[0] = f'{elapsed_time:.2f}'
+                else:
+                    lines[0] = str(min(float(lines[0][:-1]), float(f"{elapsed_time:.2f}"))) + '\n'
+                print(f'Текущее время: {f'{elapsed_time:.2f}'}\nЛучшее время: {lines[0]}')
+                start_time = None
+                with open("best_time.txt", "w") as f:
+                    f.writelines(lines)
                 continue
 
             # Проверка на столкновение с полом
