@@ -280,7 +280,7 @@ def first_lvl():
                 screen.blit(background, (background_x, 0))
                 screen.blit(win_window, (0, 0))
                 elapsed_time = time.time() - start_time
-                with open("best_time.txt.txt") as f:
+                with open("best_time.txt") as f:
                     lines = f.readlines()
                 if lines[0] == '\n':
                     lines[0] = f'{elapsed_time:.2f}'
