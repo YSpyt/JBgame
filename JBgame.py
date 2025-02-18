@@ -283,7 +283,7 @@ def first_lvl():
                 with open("best_time.txt") as f:
                     lines = f.readlines()
                 if lines[0] == '\n':
-                    lines[0] = f'{elapsed_time:.2f}'
+                    lines[0] = f'{elapsed_time:.2f}' + '\n'
                 else:
                     lines[0] = str(min(float(lines[0][:-1]), float(f"{elapsed_time:.2f}"))) + '\n'
                 print(f'Текущее время: {f'{elapsed_time:.2f}'}\nЛучшее время: {lines[0]}')
